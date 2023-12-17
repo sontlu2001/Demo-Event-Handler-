@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark  navbar-expand-lg">
+  <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
     <!-- Navbar content -->
 
     <a class="navbar-brand header__logo" href="#">TurnCart</a>
@@ -10,8 +10,7 @@
       data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent"
       aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+      aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -33,8 +32,7 @@
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
-            aria-expanded="false"
-          >
+            aria-expanded="false">
             Dropdown
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -53,27 +51,26 @@
           class="form-control mr-sm-2"
           type="search"
           placeholder="Search"
-          aria-label="Search"
-        />
+          aria-label="Search" />
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
           Search
         </button>
       </form>
-      <div class="ml-2 ">
+      <div class="ml-2">
         <button type="button" class="btn btn-danger" @click="handleOpenModal">
           <i class="fa fa-shopping-cart"></i>
           <span class="badge badge-light ml-2">{{ sumAmountCart }}</span>
           <span class="sr-only">unread messages</span>
         </button>
       </div>
+      <div></div>
     </div>
   </nav>
   <app-modal :isOpen="isOpenModal" :onClose="handleCloseModal">
     <cart-list
       :cartList="cartList"
       :handleUpOrDownAmount="handleUpOrDownAmount"
-      :handleRemoveCart="handleRemoveCart"
-    ></cart-list>
+      :handleRemoveCart="handleRemoveCart"></cart-list>
   </app-modal>
 </template>
 

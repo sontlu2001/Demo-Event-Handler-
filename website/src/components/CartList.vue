@@ -20,15 +20,13 @@
         <td>
           <button
             class="btn btn-success"
-            @click="handleUpOrDownAmount(cart, true)"
-          >
+            @click="handleUpOrDownAmount(cart, true)">
             <i class="fa fa-arrow-up"></i>
           </button>
           <span class="mx-2">{{ cart.amount }}</span>
           <button
             class="btn btn-success"
-            @click="handleUpOrDownAmount(cart, false)"
-          >
+            @click="handleUpOrDownAmount(cart, false)">
             <i class="fa fa-arrow-down"></i>
           </button>
         </td>
@@ -48,12 +46,13 @@
       <td></td>
       <td></td>
       <td></td>
-      <td>
+      <td style="font-size: 20px" class="text-danger">
         {{ totalMonney }}
       </td>
       <td></td>
     </tfoot>
   </table>
+  <div><button class="mx-auto btn btn-primary">Mua hàng</button></div>
 </template>
 
 <script>

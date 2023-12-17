@@ -1,8 +1,8 @@
 <template>
-  <div class="modal" v-if="isOpen"  @click="onClose">
+  <div class="modal" v-if="isOpen" @click="onClose">
     <div class="modal__container" @click.stop>
       <div class="modal__header">
-        <h1>Cart</h1>
+        <h1>Giỏ hàng</h1>
         <div class="modal__close" @click="onClose">
           <i class="fa fa-times"></i>
         </div>
