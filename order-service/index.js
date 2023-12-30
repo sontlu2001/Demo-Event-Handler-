@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 7002;
+const PORT = 7004;
 const mongoose = require("mongoose");
 const Order = require("./model/Order");
 const amqp = require("amqplib");

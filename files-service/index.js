@@ -1,15 +1,12 @@
 const express = require("express");
 const app = express();
-const PORT = 7002;
+const PORT = 7005;
 const mongoose = require("mongoose");
-const Product = require("./model/Product");
 const jwt = require("jsonwebtoken");
 const amqp = require("amqplib");
-const multer = require('multer');
 const isAuthenticated = require("./middleware/isAuthenticated");
 
 var order, channel, connection;
-const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 mongoose.connect(
@@ -23,20 +20,27 @@ mongoose.connect(
   }
 );
 
-async function addNewImageProduct(req, res, next) {
-  const message = JSON.stringify({req, res,next});
-  console.log(message);
-  // const amqpServer =
-  //   "amqps://wahhaufo:yTr-nUGY4YKp8Geqq26JMJNeL7yP65vB@armadillo.rmq.cloudamqp.com/wahhaufo";
-  // connection = await amqp.connect(amqpServer);
-  // channel = await connection.createChannel();
-  // await channel.assertQueue("product_image_queue", { durable: false });
-
-  // channel.sendToQueue(queue, Buffer.from(message));
-  // console.log(`Sent message to RabbitMQ for product: ${product.id}`);
-  next();
+async function connect() {
+  const amqpServer =
+    "amqps://wahhaufo:yTr-nUGY4YKp8Geqq26JMJNeL7yP65vB@armadillo.rmq.cloudamqp.com/wahhaufo";
+  connection = await amqp.connect(amqpServer);
+  channel = await connection.createChannel();
+  await channel.assertQueue("PRODUCT");
 }
-
+// connect();
+app.post("/product", isAuthenticated, async (req, res) => {
+  const file = req.file;
+  console.log("File: ", req.file);
+  // const { name, description, price, quantity } = req.body;
+  // const newProduct = new Product({
+  //   name,
+  //   description,
+  //   price,
+  //   quantity,
+  // });
+  // newProduct.save();
+  // return res.status(200).json({ message: " Create product successfully!", data: newProduct });
+});
 
 app.post("/product/buy", isAuthenticated, async (req, res) => {
   const { orders } = req.body;
@@ -88,21 +92,8 @@ async function checkStockAvailability(productId, quantityToOrder) {
   return product.quantity >= quantityToOrder ? true : false;
 }
 
-app.post("/product", isAuthenticated,addNewImageProduct, async (req, res) => {
-  // Lấy đường dẫn tới ảnh sau khi tải lên từ req.file.path
-  const imageUrl = req.file.path;
-  console.log(imageUrl);
-  // const { name, description,title, price, quantity } = req.body;
-  // const newProduct = new Product({
-  //   name,
-  //   description,
-  //   price,
-  //   quantity,
-  // });
-  // newProduct.save();
-  // return res.status(200).json({ message: " Create product successfully!", data: newProduct });
-});
+
 
 app.listen(PORT, () => {
-  console.log(`Files-Service at ${PORT}`);
+  console.log(`Product-Service at ${PORT}`);
 });

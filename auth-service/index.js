@@ -4,6 +4,7 @@ const PORT = 7001;
 const mongoose = require("mongoose");
 const User = require("./model/User");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 
 mongoose.connect(
   "mongodb://127.0.0.1:27017/AuthService",
@@ -21,21 +22,20 @@ app.use(express.json());
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+
   if (!user) {
     return res.json({ message: "User doesn't exist" });
-  } else {
-    if (password !== user.password) {
-      return res.json({ message: "Password Incorrect" });
-    }
-    const payload = {
-      email,
-      name: user.name,
-    };
-    jwt.sign(payload, "secret", (err, token) => {
-      if (err) console.log(err);
-      else return res.json({ token: token });
-    });
   }
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) {
+    return res.status(401).json({ message: 'Password Incorrect' });
+  }
+  const payload = {
+    email,
+    name: user.name,
+  };
+  const token = jwt.sign(payload, "secret", { expiresIn: "1h" });
+  return res.status(200).json({ token: token });
 });
 
 app.post("/register", async (req, res) => {
@@ -44,10 +44,11 @@ app.post("/register", async (req, res) => {
   if (userExists) {
     return res.json({ message: "User already exists" });
   } else {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
       name,
-      password,
+      password: hashedPassword,
     });
     newUser.save();
     return res.json(newUser);

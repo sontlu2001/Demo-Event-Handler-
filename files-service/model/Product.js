@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
   name: String,
-  title: String,
   description: String,
   created_at: {
     type: Date,
