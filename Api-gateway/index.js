@@ -3,10 +3,16 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const app = express();
 
-const authServiceProxy = createProxyMiddleware({
+const userServiceProxy = createProxyMiddleware({
   target: "http://localhost:7001/",
   pathRewrite: {
-    "^/auth-service": "",
+    "^/user-service": "",
+  },
+});
+const shopServiceProxy = createProxyMiddleware({
+  target: "http://localhost:7002/",
+  pathRewrite: {
+    "^/shop-service": "",
   },
 });
 const orderServiceProxy = createProxyMiddleware({
@@ -17,32 +23,32 @@ const orderServiceProxy = createProxyMiddleware({
 });
 
 const productServiceProxy = createProxyMiddleware({
-  target: "http://localhost:7002",
+  target: "http://localhost:7003",
   pathRewrite: {
     "^/product-service": "",
   },
 });
 
 const inventoryServiceProxy = createProxyMiddleware({
-  target: "http://localhost:7003",
+  target: "http://localhost:7004",
   pathRewrite: {
     "^/inventory-service": "",
   },
 });
 
-const filesServiceProxy = createProxyMiddleware({
+const notificationServiceProxy = createProxyMiddleware({
   target: "http://localhost:7005",
   pathRewrite: {
-    "^/files-service": "",
+    "^/notification-service": "",
   },
 });
 
 // Định tuyến các yêu cầu tới các dịch vụ tương ứng
-app.use("/auth-service/*", authServiceProxy); // http://localhost:7001
-app.use("/order-service/*", orderServiceProxy); // http://localhost:7002
+app.use("/user-service/*", userServiceProxy); // http://localhost:7001
+app.use("/shop-service/*", shopServiceProxy); // http://localhost:7002
 app.use("/product-service/", productServiceProxy); // http://localhost:7003
 app.use("/inventory-service/*", inventoryServiceProxy); // http://localhost:7004
-app.use("/files-service/*", inventoryServiceProxy);// http://localhost:7005
+app.use("/notification-service/*", notificationServiceProxy); // http://localhost:7005
 
 const PORT = 7000;
 app.listen(PORT, () => {

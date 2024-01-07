@@ -2,14 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const InventorySchema = new Schema({
-  productID: {
+  productId: {
     type: String,
     required: true,
     unique: true,
-  },
-  productName: {
-    type: String,
-    required: true,
   },
   quantity: {
     type: Number,
