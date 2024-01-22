@@ -15,7 +15,7 @@ async function consumerCreateProduct() {
     durable: false,
   });
   // Create queue
-  const { queue } = await channel.assertQueue("");
+  const { queue } = await channel.assertQueue("PRODUCT_QUEUE");
   // Bind queue
   await channel.bindQueue(queue, nameExchange, "");
   channel.consume(queue, async (data) => {
@@ -25,7 +25,7 @@ async function consumerCreateProduct() {
     const shop = await Shop.findById(shopId);
     if (shop) {
       await channel.assertQueue("NOTIFICATION_QUEUE", { durable: true });
-      const message = `Shop ${shop.name} vừa có sản phẩm mới hãy ghé xem ngay để không bỏ lỡ nhé !`;
+      const message = `Shop ${shop.name} vừa có sản phẩm mới hãy ghé xem ngay!`;
       shop.followers.map((userId) => {
         channel.sendToQueue(
           "NOTIFICATION_QUEUE",

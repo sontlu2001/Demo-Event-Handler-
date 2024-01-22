@@ -9,16 +9,11 @@ const userServiceProxy = createProxyMiddleware({
     "^/user-service": "",
   },
 });
+
 const shopServiceProxy = createProxyMiddleware({
   target: "http://localhost:7002/",
   pathRewrite: {
     "^/shop-service": "",
-  },
-});
-const orderServiceProxy = createProxyMiddleware({
-  target: "http://localhost:7004",
-  pathRewrite: {
-    "^/order-service": "",
   },
 });
 
