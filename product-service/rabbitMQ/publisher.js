@@ -14,7 +14,7 @@ async function publisherCreateProduct(productId, shopId, quantity) {
   // Publish message to exchange
   await channel.publish(
     "PRODUCT",
-    "",
+    "PRODUCT_QUEUE",
     Buffer.from(JSON.stringify({ productId, shopId, quantity }))
   );
   console.log("====================================");

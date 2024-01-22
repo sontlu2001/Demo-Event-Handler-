@@ -5,8 +5,8 @@ const bcrypt = require("bcrypt");
 class ShopController {
   async register(req, res) {
     const userId = req.userId;
-    const { email, name, address } = req.body;
-    const newShop = new Shop({ email, name, address, userId });
+    const { email, name, address, phoneNumber } = req.body;
+    const newShop = new Shop({ email, name, address, userId, phoneNumber });
     newShop.save();
     return res.status(200).json({
       message: "Created shop successfully!",

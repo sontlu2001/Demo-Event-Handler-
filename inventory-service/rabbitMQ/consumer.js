@@ -5,7 +5,7 @@ async function consumerProductCreate() {
   const amqpServer =
     "amqps://wahhaufo:yTr-nUGY4YKp8Geqq26JMJNeL7yP65vB@armadillo.rmq.cloudamqp.com/wahhaufo";
   const nameExchange = "PRODUCT";
-  const nameQueue = "PRODUCT_QUEUE";
+  const productQueue = "PRODUCT_QUEUE";
   // Create connection
   connection = await amqp.connect(amqpServer);
   // Create channel
@@ -15,7 +15,7 @@ async function consumerProductCreate() {
     durable: false,
   });
   // Create queue
-  const { queue } = await channel.assertQueue("");
+  const { queue } = await channel.assertQueue(productQueue);
   // Bind queue
   await channel.bindQueue(queue, nameExchange, "");
   await channel.consume(

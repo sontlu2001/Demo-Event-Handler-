@@ -27,7 +27,7 @@ class UserController {
   }
 
   async register(req, res) {
-    const { email, password, name } = req.body;
+    const { email, password, name, address, phoneNumber } = req.body;
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.json({ message: "User already exists" });
@@ -37,6 +37,8 @@ class UserController {
         email,
         name,
         password: hashedPassword,
+        address,
+        phoneNumber,
       });
       newUser.save();
       return res.json(newUser);

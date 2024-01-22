@@ -32,22 +32,15 @@ async function connect() {
 connect();
 
 app.post("/product", authMiddleware, async (req, res) => {
-  const {
-    name,
-    description,
-    buyingPrice,
-    sellingPrice,
-    shopId,
-    thumbnail_url,
-    quantity,
-  } = req.body;
+  const {name,description,buyingPrice,sellingPrice,shopId,quantity} = req.body;
+  
   const newProduct = await Product.create({
     name,
     description,
     buyingPrice,
     sellingPrice,
     shopId,
-    thumbnail_url,
+    quantity : quantity || 0,
   });
   if (newProduct) {
     console.log(newProduct, "newProduct");

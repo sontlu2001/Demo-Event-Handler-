@@ -7,8 +7,6 @@ const ProductSchema = new Schema({
   buyingPrice: Number,
   sellingPrice: Number,
   shopId: { type: Schema.Types.ObjectId, ref: "Shop" },
-  image_url: [{ type: String, default: [] }],
-  thumbnail_url: String,
   created_at: {
     type: Date,
     default: Date.now(),

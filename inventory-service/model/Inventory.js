@@ -11,6 +11,10 @@ const InventorySchema = new Schema({
     type: Number,
     default: 0,
   },
+  lastUpdate: {
+    type: Date,
+    default: Date.now(),
+  },
   created_at: {
     type: Date,
     default: Date.now(),
