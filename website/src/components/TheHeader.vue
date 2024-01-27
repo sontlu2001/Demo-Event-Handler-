@@ -57,7 +57,8 @@
             Search
           </button>
         </form>
-        <div class="ml-1 mr-2">
+
+        <div class="header-card ml-1 mr-2">
           <b-button
             type="button"
             class="btn btn-danger"
@@ -76,9 +77,65 @@
               :handleRemoveCart="handleRemoveCart" />
           </b-modal>
         </div>
-        <div class="ml-3">
-          <b-avatar v-if="isLogin" variant="primary" text="DA"></b-avatar>
-          <b-button v-else variant="outline-light">Đăng nhập</b-button>
+
+        <div class="header-bir p-2" style="position: relative">
+          <div type="button" class="p-2 bg-dark" id="popover-badge">
+            <i class="fa fa-bell text-light" style="font-size: 20px"></i>
+            <span class="header-badge badge badge-danger rounded">10</span>
+          </div>
+          <b-popover target="popover-badge" triggers="click" placement="bottom">
+            <b-list-group style="width: 240px">
+              <b-list-group-item
+                @mouseover="highlightItem"
+                @mouseout="unhighlightItem"
+                class="flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <strong class="mb-1">Thông báo</strong>
+                  <small>3 days ago</small>
+                </div>
+
+                <p class="mb-1">Có sản phẩm mới</p>
+              </b-list-group-item>
+              <b-list-group-item
+                @mouseover="highlightItem"
+                @mouseout="unhighlightItem"
+                class="flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <strong class="mb-1">Thông báo</strong>
+                  <small>3 days ago</small>
+                </div>
+                <p class="mb-1">Có sản phẩm mới</p>
+              </b-list-group-item>
+            </b-list-group>
+          </b-popover>
+        </div>
+
+        <div class="header-profile ml-4">
+          <b-avatar
+            v-if="isLogin"
+            variant="primary"
+            text="DA"
+            id="popover-profile"></b-avatar>
+          <b-popover
+            target="popover-profile"
+            triggers="hover"
+            placement="bottom">
+            <b-list-group class="p-0">
+              <b-list-group-item
+                @mouseover="highlightItem"
+                @mouseout="unhighlightItem"
+                >Xem thông tin</b-list-group-item
+              >
+              <b-list-group-item
+                @mouseover="highlightItem"
+                @mouseout="unhighlightItem"
+                >Tạo sản phẩm</b-list-group-item
+              >
+            </b-list-group>
+          </b-popover>
+          <b-button v-if="!isLogin" variant="outline-light" @click="goToLogin"
+            >Đăng nhập</b-button
+          >
         </div>
       </div>
     </nav>
@@ -103,15 +160,13 @@ export default {
     handleRemoveCart: {
       type: Function,
     },
-    isLogin: {
-      type: Boolean,
-    },
   },
 
   data() {
     return {
       isOpenModal: false,
       isLoggin: false,
+      isPopoverVisible: true,
     };
   },
 
@@ -122,9 +177,23 @@ export default {
     handleCloseModal() {
       this.isOpenModal = false;
     },
+
+    goToLogin() {
+      this.$router.push("/login");
+    },
+
+    highlightItem(e) {
+      e.target.classList.add("active");
+    },
+
+    unhighlightItem(e) {
+      e.target.classList.remove("active");
+    },
   },
 
-  created() {},
+  created() {
+    this.isLogin = localStorage.getItem("token") ? true : false;
+  },
 };
 </script>
 
@@ -134,5 +203,19 @@ export default {
   background: -webkit-linear-gradient(#41b883, #35495e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+.header-badge {
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  border-radius: 50% !important;
+}
+
+.list-group-item {
+  border: none !important;
+}
+
+.popover-body {
+  padding: unset !important;
 }
 </style>

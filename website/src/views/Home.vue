@@ -7,6 +7,7 @@
         :handleUpOrDownAmount="handleUpOrDownAmount"
         :handleRemoveCart="handleRemoveCart"></the-header>
     </header>
+
     <main class="container mt-3">
       <the-productsList
         :productList="productList"
@@ -29,10 +30,12 @@ import sp8 from "@/assets/sp8.webp";
 
 export default {
   name: "App",
+
   components: {
     TheHeader,
     TheProductsList,
   },
+
   data() {
     return {
       productList: [
@@ -115,6 +118,7 @@ export default {
       cartList: [],
     };
   },
+
   computed: {
     sumAmountCart() {
       return this.cartList.reduce(
@@ -123,6 +127,7 @@ export default {
       );
     },
   },
+
   methods: {
     handleAddCart(cart) {
       const index = this.cartList.findIndex(

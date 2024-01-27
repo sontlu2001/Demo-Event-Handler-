@@ -7,11 +7,15 @@ class UserController {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ message: "User doesn't exist" });
+      return res.json({
+        message: "Vui lòng kiểm tra lại thông tin đăng nhập!",
+      });
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Password Incorrect" });
+      return res
+        .status(401)
+        .json({ message: "Vui lòng kiểm tra lại thông tin đăng nhập!" });
     }
     const payload = {
       email,
@@ -23,7 +27,7 @@ class UserController {
     });
     return res
       .status(200)
-      .json({ message: "Login successfully!", token: token });
+      .json({ message: "Login successfully!", token: token, code: 200 });
   }
 
   async register(req, res) {
