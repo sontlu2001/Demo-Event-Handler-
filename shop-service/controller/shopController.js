@@ -13,6 +13,7 @@ class ShopController {
       metaData: newShop,
     });
   }
+
   async follow(req, res) {
     try {
       const userId = req.userId;
@@ -28,6 +29,18 @@ class ShopController {
     } catch (error) {
       return res.json({ message: error });
     }
+  }
+
+  async getShopById(req,res){
+    const id = req.params.id;
+    if (!id)
+    return res.status(400).json({
+      message: "Bad request"
+    })
+    const shop = Shop.findById(id);
+    return res.status(200).json({
+      metaData:shop
+    })
   }
 }
 
