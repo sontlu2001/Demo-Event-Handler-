@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 7004;
 const mongoose = require("mongoose");
-const { consumerProductCreate } = require("./rabbitMQ/consumer");
+const { consumerInventory } = require("./rabbitMQ/consumer");
 
 app.use(express.json());
 mongoose.connect(
@@ -16,7 +16,7 @@ mongoose.connect(
   }
 );
 
-consumerProductCreate();
+consumerInventory();
 
 app.listen(PORT, () => {
   console.log(`Inventory-Service at ${PORT}`);
