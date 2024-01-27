@@ -1,83 +1,93 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-    <!-- Navbar content -->
+  <div>
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+      <!-- Navbar content -->
 
-    <a class="navbar-brand header__logo" href="#">EasyCart</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <a class="navbar-brand header__logo" href="#">EasyCart</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#"
-            >Home <span class="sr-only">(current)</span></a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Sản phẩm</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
-            Danh mục
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Thiết bị điện tử</a>
-            <a class="dropdown-item" href="#">Điện thoại & phụ kiện</a>
-            <a class="dropdown-item" href="#">Thời trang nam</a>
-            <a class="dropdown-item" href="#">Thời trang nữ</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Sản phẩm</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+              Danh mục
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Thiết bị điện tử</a>
+              <a class="dropdown-item" href="#">Điện thoại & phụ kiện</a>
+              <a class="dropdown-item" href="#">Thời trang nam</a>
+              <a class="dropdown-item" href="#">Thời trang nữ</a>
 
-            <!-- <div class="dropdown-divider"></div>
+              <!-- <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">Something else here</a> -->
-          </div>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input
-          class="form-control mr-sm-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search" />
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-          Search
-        </button>
-      </form>
-      <div class="ml-2">
-        <button type="button" class="btn btn-danger" @click="handleOpenModal">
-          <i class="fa fa-shopping-cart"></i>
-          <span class="badge badge-light ml-2">{{ sumAmountCart }}</span>
-        </button>
-        <button type="button" class="ml-5 btn btn-light" style="">
-          <i class="fa fa-user"></i>
-        </button>
+            </div>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search" />
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+            Search
+          </button>
+        </form>
+        <div class="ml-1 mr-2">
+          <b-button
+            type="button"
+            class="btn btn-danger"
+            v-b-modal.model-cart-list>
+            <i class="fa fa-shopping-cart"></i>
+            <span class="badge badge-light ml-2">{{ sumAmountCart }}</span>
+          </b-button>
+          <b-modal
+            id="model-cart-list"
+            size="xl"
+            cancel-title="Huỷ"
+            ok-title="Thanh toán">
+            <cart-list
+              :cartList="cartList"
+              :handleUpOrDownAmount="handleUpOrDownAmount"
+              :handleRemoveCart="handleRemoveCart" />
+          </b-modal>
+        </div>
+        <div class="ml-3">
+          <b-avatar v-if="isLogin" variant="primary" text="DA"></b-avatar>
+          <b-button v-else variant="outline-light">Đăng nhập</b-button>
+        </div>
       </div>
-      <div></div>
-    </div>
-  </nav>
-  <app-modal :isOpen="isOpenModal" :onClose="handleCloseModal">
-    <cart-list
-      :cartList="cartList"
-      :handleUpOrDownAmount="handleUpOrDownAmount"
-      :handleRemoveCart="handleRemoveCart"></cart-list>
-  </app-modal>
+    </nav>
+  </div>
 </template>
 
 <script>
 import CartList from "./CartList.vue";
+
 export default {
   components: { CartList },
   props: {
@@ -93,12 +103,18 @@ export default {
     handleRemoveCart: {
       type: Function,
     },
+    isLogin: {
+      type: Boolean,
+    },
   },
+
   data() {
     return {
       isOpenModal: false,
+      isLoggin: false,
     };
   },
+
   methods: {
     handleOpenModal() {
       this.isOpenModal = true;
@@ -107,6 +123,8 @@ export default {
       this.isOpenModal = false;
     },
   },
+
+  created() {},
 };
 </script>
 
