@@ -41,6 +41,20 @@ class ShopController {
       return res.json({ message: error });
     }
   }
+
+  async detailByUser(req, res) {
+
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({ message: 'Not Unauthorize', code: 401 });
+    }
+    try {
+      const shop = await Shop.findOne({ userId: userId });
+      return res.status(200).json({ metaData: shop, code: 200 });
+    } catch (error) {
+      return res.json({ message: error });
+    }
+  }
 }
 
 module.exports = new ShopController();

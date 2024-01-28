@@ -1,17 +1,12 @@
 <template>
   <section>
     <header>
-      <the-header
-        :cartList="cartList"
-        :sumAmountCart="sumAmountCart"
-        :handleUpOrDownAmount="handleUpOrDownAmount"
+      <the-header :cartList="cartList" :sumAmountCart="sumAmountCart" :handleUpOrDownAmount="handleUpOrDownAmount"
         :handleRemoveCart="handleRemoveCart"></the-header>
     </header>
 
     <main class="container mt-3">
-      <the-productsList
-        :productList="productList"
-        :handleAddCart="handleAddCart"></the-productsList>
+      <the-productsList :productList="productList" :handleAddCart="handleAddCart"></the-productsList>
     </main>
   </section>
 </template>

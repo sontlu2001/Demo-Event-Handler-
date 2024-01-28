@@ -7,15 +7,16 @@ class UserController {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({
+      return res.status(401).json({
         message: "Vui lòng kiểm tra lại thông tin đăng nhập!",
+        code: 401,
       });
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res
         .status(401)
-        .json({ message: "Vui lòng kiểm tra lại thông tin đăng nhập!" });
+        .json({ message: "Vui lòng kiểm tra lại thông tin đăng nhập!", code: 401 });
     }
     const payload = {
       email,

@@ -1,3 +1,4 @@
+const { response } = require("express");
 const Product = require("../model/Product");
 const { publisherCreateProduct } = require("../rabbitMQ/publisher");
 const axios = require("axios");
@@ -14,7 +15,6 @@ class ProductController {
             quantity: quantity || 0,
         });
         if (newProduct) {
-            console.log("newProduct:: ", newProduct);
             publisherCreateProduct(newProduct._id, newProduct.shopId, quantity);
             return res
                 .status(200)
@@ -44,6 +44,32 @@ class ProductController {
         else {
             return res.status(404).json({ message: 'Shop not found!', code: 404 });
         }
+    }
+
+    async getProductsByShop(req, res) {
+        const shopId = req.params.shopId;
+        const listProduct = await Product.find({ shopId: shopId }, (err, products) => {
+            if (err) {
+                return res.status(500).json({ message: 'Internal server error!', code: 500 });
+            }
+        }).lean().exec();
+
+        for (const product of listProduct) {
+            try {
+                const response = await axios.get(`http://localhost:7000/inventory-service/getQuantity/${product._id}`)
+                if (response.data && response.data.metaData) {
+                    product.quantity = response.data.metaData.quantity;
+                }
+            }
+            catch (error) {
+                console.log("error:: ", error);
+            }
+        }
+        return res.status(200).json({
+            message: 'Get products successfully!',
+            metaData: listProduct,
+            code: 200,
+        });
     }
 }
 

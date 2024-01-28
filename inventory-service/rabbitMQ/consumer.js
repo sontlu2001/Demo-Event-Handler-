@@ -12,7 +12,10 @@ async function consumerInventory() {
   await channel.consume(
     "INVENTORY_QUEUE",
     async (data) => {
-      const { productId, quantity } = JSON.parse(data.content);
+      let { productId, quantity } = JSON.parse(data.content);
+      if (!quantity) {
+        quantity = 0;
+      }
       await Inventory.findOneAndUpdate(
         {
           productId,
