@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from '@/axios';
 
 export default {
   data() {
@@ -51,14 +51,15 @@ export default {
   methods: {
     handleLogin() {
       if (this.validateemail() && this.validatepassword()) {
-        axios
-          .post("http://localhost:7000/user-service/login", {
+        apiService
+          .post("/user-service/login", {
             email: this.email,
             password: this.password,
           })
           .then((res) => {
             if (res.data.code === 200) {
               localStorage.setItem("token", res.data.token);
+              localStorage.setItem("userName", res.data.metaData.name);
               this.$router.push("/");
             } else {
               console.log('run');
@@ -68,7 +69,7 @@ export default {
           })
           .catch((err) => {
             this.isLoginFail = true;
-            this.toastMessage = err;
+            this.toastMessage = "Vui lòng kiểm tra lại thông tin đăng nhập!";
             console.log(err);
           });
       }

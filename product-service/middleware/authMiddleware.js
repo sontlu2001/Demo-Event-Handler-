@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const secretKey = "secret";
 
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
+  const token = req.headers?.authorization;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
@@ -18,4 +18,17 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
-module.exports = authMiddleware;
+const isLogin = (req, res, next) => {
+  const token = req.headers?.authorization;
+
+  if (token) {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "Unauthorized: Invalid token" });
+      }
+      req.userId = decoded.userId;
+    })
+  }
+  next();
+};
+module.exports = { authMiddleware, isLogin };

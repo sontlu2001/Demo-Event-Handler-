@@ -27,9 +27,6 @@
               <a class="dropdown-item" href="#">Điện thoại & phụ kiện</a>
               <a class="dropdown-item" href="#">Thời trang nam</a>
               <a class="dropdown-item" href="#">Thời trang nữ</a>
-
-              <!-- <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a> -->
             </div>
           </li>
         </ul>
@@ -51,36 +48,30 @@
           </b-modal>
         </div>
 
-        <div class="header-bir p-2" style="position: relative">
+        <div v-if="isLogin" class="header-bir p-2" style="position: relative">
           <div type="button" class="p-2 bg-dark" id="popover-badge">
             <i class="fa fa-bell text-light" style="font-size: 20px"></i>
-            <span class="header-badge badge badge-danger rounded">10</span>
+            <span v-if="unseenCount > 0" class="header-badge badge badge-danger rounded">{{ unseenCount }}</span>
           </div>
+
           <b-popover target="popover-badge" triggers="click" placement="bottom">
             <b-list-group style="width: 240px">
-              <b-list-group-item @mouseover="highlightItem" @mouseout="unhighlightItem"
-                class="flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                  <strong class="mb-1">Thông báo</strong>
-                  <small>3 days ago</small>
-                </div>
 
-                <p class="mb-1">Có sản phẩm mới</p>
-              </b-list-group-item>
-              <b-list-group-item @mouseover="highlightItem" @mouseout="unhighlightItem"
+              <b-list-group-item v-for="(item, index) in notificationList" :key="index"
                 class="flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                   <strong class="mb-1">Thông báo</strong>
-                  <small>3 days ago</small>
+                  <small>{{ calculateTimeAgo(item.created_at) }}</small>
                 </div>
-                <p class="mb-1">Có sản phẩm mới</p>
+                <p class="mb-1">{{ item.message }}</p>
               </b-list-group-item>
+
             </b-list-group>
           </b-popover>
         </div>
 
         <div class="header-profile ml-4">
-          <b-avatar v-if="isLogin" variant="primary" text="DA" id="popover-profile"></b-avatar>
+          <b-avatar variant="info" v-if="isLogin" id="popover-profile">{{ userName }}</b-avatar>
           <b-popover target="popover-profile" triggers="hover" placement="bottom">
             <b-list-group class="p-0">
               <b-list-group-item @click="this.$router.push('/user/profile')" @mouseover="highlightItem"
@@ -88,20 +79,23 @@
                 Xem thông tin
               </b-list-group-item>
               <b-list-group-item v-if="isShop" @click="goToManagerProduct" @mouseover="highlightItem"
-                @mouseout="unhighlightItem">Quản lý sản
-                phẩm</b-list-group-item>
+                @mouseout="unhighlightItem">Quản lý sản phẩm</b-list-group-item>
+              <b-list-group-item v-if="isLogin" @click="goToHome" @mouseover="highlightItem"
+                @mouseout="unhighlightItem">Đăng xuất</b-list-group-item>
             </b-list-group>
           </b-popover>
           <b-button v-if="!isLogin" variant="outline-light" @click="goToLogin">Đăng nhập</b-button>
         </div>
       </div>
+
     </nav>
   </div>
 </template>
 
 <script>
 import CartList from "./CartList.vue";
-import axios from "axios";
+import apiService from '@/axios';
+import moment from 'moment';
 
 export default {
   components: { CartList },
@@ -118,6 +112,13 @@ export default {
     handleRemoveCart: {
       type: Function,
     },
+    notificationList: {
+      type: Array,
+    },
+    unseenCount: {
+      type: Number,
+      default: 0,
+    },
   },
 
   data() {
@@ -126,6 +127,7 @@ export default {
       isLogin: false,
       isShop: false,
       isPopoverVisible: true,
+      userName: localStorage.getItem("userName") || '',
     };
   },
 
@@ -139,6 +141,14 @@ export default {
 
     goToLogin() {
       this.$router.push({ name: "login" });
+      localStorage.removeItem("token");
+      localStorage.removeItem("shopId");
+    },
+
+    goToHome() {
+      window.location.href = "/";
+      localStorage.removeItem("token");
+      localStorage.removeItem("shopId");
     },
 
     goToManagerProduct() {
@@ -152,20 +162,25 @@ export default {
     unhighlightItem(e) {
       e.target.classList.remove("active");
     },
+
+    calculateTimeAgo(createdAt) {
+      const timeAgo = moment(createdAt).fromNow();
+      return timeAgo;
+    }
   },
 
   created() {
+    console.log(this.notificationList);
     this.isLogin = localStorage.getItem("token") ? true : false;
     if (this.isLogin) {
-      axios
-        .get('http://localhost:7000/shop-service/detail', {
+      apiService
+        .get('/shop-service/detail', {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
           },
         })
         .then((res) => {
           if (res.data.code === 200) {
-            console.log(res.data.metaData._id);
             localStorage.setItem("shopId", JSON.stringify(res.data.metaData._id));
             this.isShop = true;
           } else {

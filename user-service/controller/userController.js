@@ -15,8 +15,8 @@ class UserController {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res
-        .status(401)
-        .json({ message: "Vui lòng kiểm tra lại thông tin đăng nhập!", code: 401 });
+        .status(201)
+        .json({ message: "Vui lòng kiểm tra lại thông tin đăng nhập!", code: 201 });
     }
     const payload = {
       email,
@@ -24,11 +24,11 @@ class UserController {
       userId: user._id,
     };
     const token = jwt.sign(payload, process.env.SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "30m",
     });
     return res
       .status(200)
-      .json({ message: "Login successfully!", token: token, code: 200 });
+      .json({ message: "Login successfully!", metaData: payload, token: token, code: 200 });
   }
 
   async register(req, res) {

@@ -5,7 +5,7 @@ const axios = require("axios");
 
 class ProductController {
     async create(req, res) {
-        const { name, description, buyingPrice, sellingPrice, shopId, quantity } = req.body;
+        const { name, description, buyingPrice, sellingPrice, shopId, quantity, urlImage = '' } = req.body;
         const newProduct = await Product.create({
             name,
             description,
@@ -13,6 +13,7 @@ class ProductController {
             sellingPrice,
             shopId,
             quantity: quantity || 0,
+            urlImage,
         });
         if (newProduct) {
             publisherCreateProduct(newProduct._id, newProduct.shopId, quantity);
@@ -23,27 +24,42 @@ class ProductController {
     }
 
     async getDetailById(req, res) {
-        const productId = req.params.id;
-        const product = await Product.findOne({ _id: productId });
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found!', code: 404 });
-        }
+        try {
+            const productId = req.params.id;
+            const userId = req.userId;
 
-        const shopResponse = await axios.get(`http://localhost:7000/shop-service/${product.shopId}`)
-        if (shopResponse.data && shopResponse.data.metaData) {
-            const productDetail = {
-                ...product.toObject(),
-                shopInfo: shopResponse.data.metaData,
-            };
+
+            const product = await Product.findOne({ _id: productId });
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found!', code: 404 });
+            }
+
+            const [shopResponse, inventoryResponse] = await Promise.all([
+                axios.get(`http://localhost:7000/shop-service/${product.shopId}`),
+                axios.get(`http://localhost:7000/inventory-service/getQuantity/${product._id}`)
+            ]);
+            let productResult = { ...product.toObject() };
+
+            if (inventoryResponse.data && inventoryResponse.data.metaData) {
+                productResult.quantity = inventoryResponse.data.metaData.quantity;
+            }
+
+            if (shopResponse.data && shopResponse.data.metaData) {
+                if (userId) {
+                    productResult.isFollow = shopResponse.data.metaData.followers.includes(userId);
+                }
+                productResult.shopInfo = shopResponse.data.metaData;
+            }
+
             return res.status(200).json({
                 message: 'Get product successfully!',
-                metaData: productDetail,
+                metaData: productResult,
                 code: 200,
             });
+        } catch (error) {
+            console.log(error);
         }
-        else {
-            return res.status(404).json({ message: 'Shop not found!', code: 404 });
-        }
+
     }
 
     async getProductsByShop(req, res) {
@@ -65,6 +81,31 @@ class ProductController {
                 console.log("error:: ", error);
             }
         }
+        return res.status(200).json({
+            message: 'Get products successfully!',
+            metaData: listProduct,
+            code: 200,
+        });
+    }
+
+    async delete(req, res) {
+        const productId = req.params.id;
+        await Product.deleteOne({ _id: productId }, (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Internal server error!', code: 500 });
+            } else {
+                return res.status(200).json({ message: 'Delete product successfully!', code: 200 });
+            }
+        });
+    }
+
+    async getAll(req, res) {
+        const listProduct = await Product.find({}, (err, products) => {
+            if (err) {
+                return res.status(500).json({ message: 'Internal server error!', code: 500 });
+            }
+        }).select('name sellingPrice urlImage');
+
         return res.status(200).json({
             message: 'Get products successfully!',
             metaData: listProduct,

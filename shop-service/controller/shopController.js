@@ -18,11 +18,13 @@ class ShopController {
       const shop = await Shop.findOne({ _id: req.body.shopId });
       const userIsFollow = shop.followers.some((userId) => userId == currentUser);
       if (userIsFollow) {
-        return res.json({ message: "User already followed this shop" });
+        shop.followers = shop.followers.filter((userId) => userId != currentUser);
+        shop.save();
+        return res.json({ code: 200, message: "Đã bỏ theo dõi shop!" });
       } else {
         shop.followers.push(currentUser);
         shop.save();
-        return res.status(200).json({ message: "Follow shop successfully!" });
+        return res.status(200).json({ code: 200, message: "Theo dõi shop thành công!" });
       }
     } catch (error) {
       return res.json({ message: error });
